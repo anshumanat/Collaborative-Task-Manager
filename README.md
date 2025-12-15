@@ -145,7 +145,7 @@ Frontend runs on:
 http://localhost:3000
 
 
-🔄 Real-Time Functionality Demo
+## 🔄 Real-Time Functionality Demo
 
 Login as User A
 
@@ -157,7 +157,7 @@ User B receives a real-time notification
 
 Updating task status sends updates to both users
 
-🧪 Notes for Reviewers
+## 🧪 Notes for Reviewers
 
 This project prioritizes engineering correctness and architecture
 
@@ -167,7 +167,7 @@ Prisma v5 is used for stability
 
 No authentication tokens are stored in localStorage
 
-✅ Submission Checklist
+## ✅ Submission Checklist
 
  Authentication & Authorization
 
