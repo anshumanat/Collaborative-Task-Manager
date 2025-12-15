@@ -1,11 +1,15 @@
 import { useEffect } from "react";
+import { useState } from "react";
 import { io } from "socket.io-client";
+import Login from "./pages/Login";
+import Tasks from "./pages/Tasks";
 
 const socket = io("http://localhost:5000", {
   withCredentials: true,
 });
 
 function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
   useEffect(() => {
     socket.on("connect", () => {
       console.log("✅ Connected to socket server");
@@ -26,14 +30,16 @@ function App() {
     };
   }, []);
 
-  return (
-    <div style={{ padding: "20px" }}>
-      <h2>Collaborative Task Manager</h2>
-      <p>Socket.io client connected.</p>
-      <p>Open console to see real-time events.</p>
-    </div>
-  );
-}
+    return (
+       <div>
+         {loggedIn ? (
+           <Tasks />
+         ) : (
+           <Login onLogin={() => setLoggedIn(true)} />
+         )}
+       </div>
+     );
+   }
 
 export default App;
 
