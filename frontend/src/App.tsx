@@ -1,45 +1,18 @@
-import { useEffect } from "react";
-import { useState } from "react";
-import { io } from "socket.io-client";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
-import Tasks from "./pages/Tasks";
-
-const socket = io("http://localhost:5000", {
-  withCredentials: true,
-});
+import Dashboard from "./pages/Dashboard";
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
-  useEffect(() => {
-    socket.on("connect", () => {
-      console.log("✅ Connected to socket server");
-    });
-
-    socket.on("task:assigned", (data) => {
-      console.log("🔔 Task assigned:", data);
-      alert(`New task assigned: ${data.title}`);
-    });
-
-    socket.on("task:updated", (data) => {
-      console.log("🔄 Task updated:", data);
-      alert(`Task status updated: ${data.status}`);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-    return (
-       <div>
-         {loggedIn ? (
-           <Tasks />
-         ) : (
-           <Login onLogin={() => setLoggedIn(true)} />
-         )}
-       </div>
-     );
-   }
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
 
 export default App;
 
