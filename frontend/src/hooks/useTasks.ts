@@ -7,11 +7,31 @@ export type Task = {
   status: string;
   priority: string;
   dueDate: string;
+  creatorId: string;
+  assignedToId: string;
 };
 
-export function useTasks() {
+type TaskFilter = {
+  type?: "assigned" | "created" | "overdue";
+  status?: string;
+  priority?: string;
+  sort?: "asc" | "desc";
+};
+
+export function useTasks(filter?: TaskFilter) {
   return useQuery<Task[]>({
-    queryKey: ["tasks"],
-    queryFn: () => apiFetch("/tasks"),
+    queryKey: ["tasks", filter],
+    queryFn: () => {
+      const params = new URLSearchParams();
+
+      if (filter?.type) params.append("type", filter.type);
+      if (filter?.status) params.append("status", filter.status);
+      if (filter?.priority) params.append("priority", filter.priority);
+      if (filter?.sort) params.append("sort", filter.sort);
+
+      return apiFetch(`/tasks?${params.toString()}`);
+    },
   });
 }
+
+
