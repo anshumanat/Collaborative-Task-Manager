@@ -8,11 +8,12 @@ let io: Server;
 export const initSocket = (server: http.Server) => {
   io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: "http://localhost:5173",
       credentials: true,
     },
   });
 
+  // 🔐 Authenticate socket using JWT from HttpOnly cookie
   io.use((socket, next) => {
     const cookieHeader = socket.handshake.headers.cookie;
 
@@ -40,16 +41,20 @@ export const initSocket = (server: http.Server) => {
     }
   });
 
+  // 🔗 Connection + room join
   io.on("connection", (socket) => {
-  const userId = socket.data.userId;
-  const roomName = `user:${userId}`;
+    const userId = socket.data.userId as string;
+    const roomName = `user:${userId}`;
 
-  socket.join(roomName);
+    socket.join(roomName);
 
-  console.log(`Socket connected for user ${userId} in room ${roomName}`);
-});
+    console.log(`🔌 Socket connected: user ${userId}`);
 
- 
+    socket.on("disconnect", () => {
+      console.log(`❌ Socket disconnected: user ${userId}`);
+    });
+  });
+
   return io;
 };
 
