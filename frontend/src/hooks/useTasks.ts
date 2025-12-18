@@ -24,14 +24,27 @@ export function useTasks(filter?: TaskFilter) {
     queryFn: () => {
       const params = new URLSearchParams();
 
-      if (filter?.type) params.append("type", filter.type);
       if (filter?.status) params.append("status", filter.status);
       if (filter?.priority) params.append("priority", filter.priority);
       if (filter?.sort) params.append("sort", filter.sort);
+
+      // 👇 IMPORTANT: map frontend type → backend view
+      if (filter?.type === "assigned") {
+        params.append("view", "assigned");
+      }
+
+      if (filter?.type === "created") {
+        params.append("view", "created");
+      }
+
+      if (filter?.type === "overdue") {
+        params.append("view", "overdue");
+      }
 
       return apiFetch(`/tasks?${params.toString()}`);
     },
   });
 }
+
 
 

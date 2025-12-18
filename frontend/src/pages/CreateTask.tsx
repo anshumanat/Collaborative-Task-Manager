@@ -3,12 +3,12 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateTask } from "../hooks/useCreateTask";
 import { useNavigate } from "react-router-dom";
-
+import AppLayout from "../components/AppLayout";
 
 const taskSchema = z.object({
-  title: z.string().min(1).max(100),
+  title: z.string().min(1, "Title is required").max(100),
   description: z.string().optional(),
-  dueDate: z.string(),
+  dueDate: z.string().min(1, "Due date is required"),
   priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]),
   assignedToId: z.string().min(1, "Assignee is required"),
 });
@@ -27,104 +27,148 @@ export default function CreateTask() {
   const createTaskMutation = useCreateTask();
   const navigate = useNavigate();
 
-
   const onSubmit = (data: TaskFormData) => {
-    const payload = {
-      ...data,
-      dueDate: new Date(data.dueDate).toISOString(),
-    };
-  
-    createTaskMutation.mutate(payload, {
-      onSuccess: () => {
-        navigate("/dashboard");
+    createTaskMutation.mutate(
+      {
+        ...data,
+        dueDate: new Date(data.dueDate).toISOString(),
       },
-    });
+      {
+        onSuccess: () => {
+          navigate("/dashboard");
+        },
+      }
+    );
   };
-  
-  
 
   return (
-    <div className="p-6 max-w-lg">
-      <h1 className="text-xl font-bold mb-4">Create Task</h1>
+    <AppLayout>
+      <div className="max-w-xl mx-auto">
+        <div className="bg-white border rounded-lg shadow-sm p-6">
+          <h1 className="text-2xl font-semibold mb-6">
+            Create New Task
+          </h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {/* Title */}
-        <div>
-          <input
-            {...register("title")}
-            placeholder="Title"
-            className="w-full border p-2 rounded"
-          />
-          {errors.title && (
-            <p className="text-red-500 text-sm">{errors.title.message}</p>
-          )}
-        </div>
-
-        {/* Description */}
-        <div>
-          <textarea
-            {...register("description")}
-            placeholder="Description"
-            className="w-full border p-2 rounded"
-          />
-        </div>
-
-        {/* Due Date */}
-        <div>
-          <input
-            type="date"
-            {...register("dueDate")}
-            className="w-full border p-2 rounded"
-          />
-        </div>
-
-        {/* Priority */}
-        <div>
-          <select
-            {...register("priority")}
-            className="w-full border p-2 rounded"
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-5"
           >
-            <option value="">Select Priority</option>
-            <option value="LOW">Low</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="HIGH">High</option>
-            <option value="URGENT">Urgent</option>
-          </select>
-          {errors.priority && (
-            <p className="text-red-500 text-sm">{errors.priority.message}</p>
-          )}
+            {/* Title */}
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Title
+              </label>
+              <input
+                {...register("title")}
+                placeholder="Task title"
+                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {errors.title && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.title.message}
+                </p>
+              )}
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Description
+              </label>
+              <textarea
+                {...register("description")}
+                placeholder="Optional description"
+                rows={3}
+                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* Due Date */}
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Due Date
+              </label>
+              <input
+                type="date"
+                {...register("dueDate")}
+                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {errors.dueDate && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.dueDate.message}
+                </p>
+              )}
+            </div>
+
+            {/* Priority */}
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Priority
+              </label>
+              <select
+                {...register("priority")}
+                className="w-full border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select priority</option>
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+                <option value="URGENT">Urgent</option>
+              </select>
+              {errors.priority && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.priority.message}
+                </p>
+              )}
+            </div>
+
+            {/* Assignee */}
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Assign To (User ID)
+              </label>
+              <input
+                {...register("assignedToId")}
+                placeholder="User ID"
+                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {errors.assignedToId && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.assignedToId.message}
+                </p>
+              )}
+            </div>
+
+            {/* Error */}
+            {createTaskMutation.isError && (
+              <p className="text-red-600 text-sm">
+                {(createTaskMutation.error as Error).message}
+              </p>
+            )}
+
+            {/* Actions */}
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => navigate("/dashboard")}
+                className="border px-4 py-2 rounded text-sm hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                disabled={createTaskMutation.isLoading}
+                className="bg-blue-600 text-white px-5 py-2 rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+              >
+                {createTaskMutation.isLoading
+                  ? "Creating..."
+                  : "Create Task"}
+              </button>
+            </div>
+          </form>
         </div>
-
-        {/* Assignee */}
-        <div>
-          <input
-            {...register("assignedToId")}
-            placeholder="Assigned User ID"
-            className="w-full border p-2 rounded"
-          />
-          {errors.assignedToId && (
-            <p className="text-red-500 text-sm">
-              {errors.assignedToId.message}
-            </p>
-          )}
-        </div>
-
-        {createTaskMutation.isError && (
-          <p className="text-red-500 text-sm">
-            {(createTaskMutation.error as Error).message}
-          </p>
-        )}
-        
-
-        <button
-          type="submit"
-          disabled={createTaskMutation.isLoading}
-          className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
-        >
-          {createTaskMutation.isLoading ? "Creating..." : "Create Task"}
-        </button>
-        
-      </form>
-    </div>
+      </div>
+    </AppLayout>
   );
 }

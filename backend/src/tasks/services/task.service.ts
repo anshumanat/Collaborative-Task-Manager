@@ -21,21 +21,21 @@ export class TaskService {
 
     const task = await TaskRepository.create({
       title: data.title,
-      description: data.description,
+      description: data.description ?? "",
       dueDate: new Date(data.dueDate),
       priority: data.priority as TaskPriority,
       creatorId: userId,
       assignedToId: data.assignedToId,
     });
 
-    // 🔔 Persistent notification on creation
+    // 🔔 Persistent notification
     await NotificationService.create(
       data.assignedToId,
       "TASK_ASSIGNED",
       `You were assigned a task: ${task.title}`
     );
 
-    // 🔔 Real-time socket event
+    // 🔔 Real-time event
     const io = getIO();
     io.to(`user:${data.assignedToId}`).emit("task:assigned", {
       taskId: task.id,
@@ -46,16 +46,31 @@ export class TaskService {
     return task;
   }
 
-  // 📄 LIST TASKS
+  // 📄 LIST TASKS (Assigned / Created / Overdue)
   static async getTasks(
     userId: string,
     filters: {
       status?: TaskStatus;
       priority?: TaskPriority;
+      creatorId?: string;
+      assignedToId?: string;
+      overdue?: boolean;
     }
   ) {
+    // 🔴 OVERDUE TASKS
+    if (filters.overdue) {
+      return TaskRepository.findMany({
+        assignedToId: userId,
+        status: { not: TaskStatus.COMPLETED },
+        priority: filters.priority,
+        dueDate: { lt: new Date() },
+      });
+    }
+
+    // 🔵 ASSIGNED / CREATED TASKS
     return TaskRepository.findMany({
-      assignedToId: userId,
+      creatorId: filters.creatorId,
+      assignedToId: filters.assignedToId,
       status: filters.status,
       priority: filters.priority,
     });
@@ -84,7 +99,7 @@ export class TaskService {
 
     const io = getIO();
 
-    // 🔔 Status change
+    // 🔔 STATUS CHANGE
     if (data.status && data.status !== task.status) {
       io.to(`user:${task.creatorId}`).emit("task:status-updated", {
         taskId: updatedTask.id,
@@ -103,14 +118,13 @@ export class TaskService {
       );
 
       await AuditService.log(
-         userId,
-         updatedTask.id,
-         `STATUS_CHANGED_TO_${updatedTask.status}`
-       );
-       
+        userId,
+        updatedTask.id,
+        `STATUS_CHANGED_TO_${updatedTask.status}`
+      );
     }
 
-    // 🔔 Priority change
+    // 🔔 PRIORITY CHANGE
     if (data.priority && data.priority !== task.priority) {
       io.to(`user:${task.creatorId}`).emit("task:priority-updated", {
         taskId: updatedTask.id,
@@ -123,7 +137,7 @@ export class TaskService {
       });
     }
 
-    // 🔔 Assignee change (reassignment)
+    // 🔔 ASSIGNEE CHANGE
     if (data.assignedToId && data.assignedToId !== task.assignedToId) {
       io.to(`user:${data.assignedToId}`).emit("task:assigned", {
         taskId: updatedTask.id,

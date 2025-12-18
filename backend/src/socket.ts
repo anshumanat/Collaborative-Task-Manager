@@ -36,7 +36,7 @@ export const initSocket = (server: http.Server) => {
 
       socket.data.userId = decoded.userId;
       next();
-    } catch {
+    } catch (error) {
       return next(new Error("Unauthorized"));
     }
   });
@@ -48,10 +48,10 @@ export const initSocket = (server: http.Server) => {
 
     socket.join(roomName);
 
-    console.log(`🔌 Socket connected: user ${userId}`);
+    console.log(`🔌 Socket connected → user:${userId}`);
 
     socket.on("disconnect", () => {
-      console.log(`❌ Socket disconnected: user ${userId}`);
+      console.log(`❌ Socket disconnected → user:${userId}`);
     });
   });
 
@@ -64,3 +64,4 @@ export const getIO = () => {
   }
   return io;
 };
+

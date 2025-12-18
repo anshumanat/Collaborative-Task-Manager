@@ -25,24 +25,27 @@ export class TaskRepository {
     });
   }
 
-  static async findMany(filters: {
-    creatorId?: string;
-    assignedToId?: string;
-    status?: TaskStatus;
-    priority?: TaskPriority;
-  }) {
-    return prisma.task.findMany({
-      where: {
-        creatorId: filters.creatorId,
-        assignedToId: filters.assignedToId,
-        status: filters.status,
-        priority: filters.priority,
-      },
-      orderBy: {
-        dueDate: "asc",
-      },
-    });
-  }
+   static async findMany(filters: {
+     creatorId?: string;
+     assignedToId?: string;
+     status?: TaskStatus | { not: TaskStatus };
+     priority?: TaskPriority;
+     dueDate?: { lt: Date };
+   }) {
+     return prisma.task.findMany({
+       where: {
+         creatorId: filters.creatorId,
+         assignedToId: filters.assignedToId,
+         status: filters.status,
+         priority: filters.priority,
+         dueDate: filters.dueDate,
+       },
+       orderBy: {
+         dueDate: "asc",
+       },
+     });
+   }
+   
 
   static async update(
     taskId: string,

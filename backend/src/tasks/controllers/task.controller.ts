@@ -22,11 +22,31 @@ export class TaskController {
 
       const status = req.query.status as TaskStatus | undefined;
       const priority = req.query.priority as TaskPriority | undefined;
+      const view = req.query.view as
+        | "assigned"
+        | "created"
+        | "overdue"
+        | undefined;
 
-      const tasks = await TaskService.getTasks(userId, {
+      const filters: any = {
         status,
         priority,
-      });
+      };
+
+      if (view === "assigned") {
+        filters.assignedToId = userId;
+      }
+
+      if (view === "created") {
+        filters.creatorId = userId;
+      }
+
+      if (view === "overdue") {
+        filters.assignedToId = userId;
+        filters.overdue = true;
+      }
+
+      const tasks = await TaskService.getTasks(userId, filters);
 
       return res.status(200).json(tasks);
     } catch (error: any) {
@@ -65,3 +85,4 @@ export class TaskController {
     }
   }
 }
+
