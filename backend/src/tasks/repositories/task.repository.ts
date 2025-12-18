@@ -12,7 +12,10 @@ export class TaskRepository {
     assignedToId: string;
   }) {
     return prisma.task.create({
-      data,
+      data: {
+        ...data,
+        description: data.description ?? "",
+      },
     });
   }
 
@@ -64,3 +67,4 @@ export class TaskRepository {
     });
   }
 }
+

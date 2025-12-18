@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import taskRoutes from "./tasks/routes/task.routes";
 import profileRoutes from "./users/routes/profile.routes";
 import notificationRoutes from "./notifications/routes/notification.routes";
+import { errorHandler } from "./middlewares/error.middleware";
 
 
 const app = express();
@@ -25,5 +26,8 @@ app.use("/api/notifications", notificationRoutes);
 app.get("/health", (_req, res) => {
   res.json({ status: "OK" });
 });
+
+app.use(errorHandler);
+
 
 export default app;
