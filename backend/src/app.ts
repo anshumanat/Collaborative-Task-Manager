@@ -13,7 +13,10 @@ import userRoutes from "./users/routes/user.routes";
 const app = express();
 app.set("trust proxy", 1);
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin:[ 
+    "http://localhost:5173",
+  "https://collaborative-task-manager-six.vercel.app",
+  ],
   credentials: true,
 }));
 app.use(express.json());
