@@ -1,186 +1,271 @@
-# 📘 Collaborative Task Manager
+# 🧑‍💻 Collaborative Task Manager
 
-## 📌 Project Overview
-
-The **Collaborative Task Manager** is a full-stack web application that enables teams to manage tasks collaboratively with **real-time updates**.
-
-It supports secure authentication, task assignment, role-based authorization, and real-time notifications using WebSockets.
-
-This project was built as part of a **Full Stack Developer assignment**, with a strong focus on **engineering quality, clean architecture, and real-time collaboration**.
+A **production-ready full-stack collaborative task management application** built as part of a Full-Stack Engineering Assessment.  
+The application supports **secure authentication, task collaboration, real-time updates, notifications, audit logging, and a responsive dashboard UI**.
 
 ---
 
-## 🚀 Features
+## 🚀 Live Demo
 
-### 🔐 Authentication & Authorization
-- User registration and login
-- JWT-based authentication stored in **HttpOnly cookies**
-- Secure logout
-- Protected routes using middleware
-
-### 📋 Task Management
-- Create, update, and delete tasks
-- Assign tasks to users
-- Task status tracking:
-  - TODO
-  - IN_PROGRESS
-  - REVIEW
-  - COMPLETED
-- Priority levels:
-  - LOW
-  - MEDIUM
-  - HIGH
-  - URGENT
-- Authorization rules:
-  - Only task creators can delete tasks
-  - Task creators and assignees can update tasks
-
-### 🔔 Real-Time Collaboration
-- Real-time notifications using **Socket.io**
-- Notifications when:
-  - A task is assigned to a user
-  - A task status is updated
-- User-specific socket rooms for targeted real-time updates
-
-### 🖥️ Frontend
-- Login page
-- Task list page
-- Real-time alerts for task events
-- Minimal UI focused on functionality
+- **Frontend**: <FRONTEND_DEPLOYED_URL>
+- **Backend API**: <BACKEND_DEPLOYED_URL>
 
 ---
 
-## 🏗️ Tech Stack
-
-### Backend
-- Node.js
-- Express.js
-- TypeScript
-- PostgreSQL
-- Prisma ORM
-- JWT (Authentication)
-- Socket.io
+## 🧰 Tech Stack
 
 ### Frontend
-- React (TypeScript)
-- Socket.io Client
-- Fetch API
+- **React (Vite)**
+- **TypeScript**
+- **Tailwind CSS**
+- **React Query (TanStack Query)**
+- **React Hook Form + Zod**
+- **Socket.io Client**
+
+### Backend
+- **Node.js + Express**
+- **TypeScript**
+- **Prisma ORM**
+- **PostgreSQL**
+- **JWT Authentication**
+- **Socket.io**
+- **Jest (Testing)**
 
 ---
 
-## 🧠 Architecture Overview
+## 🗂️ Project Structure
 
-The backend follows a **layered architecture**:
+```text
+collaborative-task-manager/
+│
+├── backend/
+│   ├── src/
+│   │   ├── auth/
+│   │   ├── tasks/
+│   │   ├── notifications/
+│   │   ├── audit/
+│   │   ├── socket.ts
+│   │   ├── app.ts
+│   │   └── server.ts
+│   └── prisma/
+│
+└── frontend/
+    ├── src/
+    │   ├── pages/
+    │   ├── components/
+    │   ├── hooks/
+    │   ├── api/
+    │   └── main.tsx
 
-Controller → Service → Repository → Database
+## 🔐 Authentication & Authorization
 
-
-### Why this architecture?
-- Clear separation of concerns
-- Easier maintenance and scalability
-- Cleaner and testable business logic
-
-### Real-Time Design
-- Socket.io initialized once at server startup
-- JWT authentication during socket handshake
-- Each user joins a room: `user:<userId>`
-- Events are emitted from the **service layer**, not controllers
+- User registration & login  
+- Passwords hashed using **bcrypt**  
+- JWT stored in **HttpOnly cookies**  
+- Protected routes via middleware  
+- Role-based permissions:
+  - Only creators can delete tasks
+  - Creators & assignees can update tasks
 
 ---
 
-## 📂 Project Structure
+## 📋 Task Management (CRUD)
 
-Collaborative-Task-Manager
-├── backend
-│ ├── src
-│ │ ├── auth
-│ │ ├── tasks
-│ │ ├── middlewares
-│ │ ├── socket.ts
-│ │ ├── app.ts
-│ │ └── server.ts
-│ └── prisma
-│
-├── frontend
-│ └── src
-│ ├── pages
-│ ├── api
-│ └── App.tsx
-│
-└── README.md
+Each task contains:
+- `title`
+- `description`
+- `dueDate`
+- `priority` (LOW, MEDIUM, HIGH, URGENT)
+- `status` (TODO, IN_PROGRESS, REVIEW, COMPLETED)
+- `creatorId`
+- `assignedToId`
+
+Supported operations:
+- Create task
+- Update task
+- Delete task
+- Filter by status & priority
+- Sort by due date
+
+---
+
+## ⚡ Real-Time Collaboration (Socket.io)
+
+Real-time events include:
+- Task assignment
+- Status updates
+- Priority updates
+- Instant notification delivery
+- Live dashboard synchronization (no refresh needed)
+
+Sockets are authenticated using JWT from cookies and users are joined to private rooms:
+
+```text
+user:{userId}
 
 
-## ▶️ How to Run the Project Locally
-1️⃣ Clone the Repository
-git clone <your-github-repo-url>
-cd Collaborative-Task-Manager
+## 🔔 Notifications System
 
-2️⃣ Backend Setup
+- Persistent notifications stored in DB  
+- Real-time delivery via Socket.io  
+- Notification types:
+  - Task assigned
+  - Task status changed
+- Mark individual notification as read
+- Mark all notifications as read
+- Notification badge updates automatically
+
+---
+
+## 🧾 Audit Logging (Bonus)
+
+Every important task update is logged:
+- Who updated the task
+- What action was taken
+- When it happened
+
+Useful for:
+- Debugging
+- Accountability
+- Enterprise-grade traceability
+
+---
+
+## 🧑‍💼 User Profile
+
+- View profile details
+- Update user name
+- Email is read-only
+- Profile data protected via auth middleware
+
+---
+
+## 📊 Dashboard Features
+
+Dashboard includes:
+- Tasks assigned to me
+- Tasks created by me
+- Overdue tasks
+- Filtering by status & priority
+- Sorting by due date
+- Loading skeletons for better UX
+- Task status updates use optimistic UI for instant feedback.
+---
+
+## 🎨 UI & UX
+
+- Fully responsive layout
+- Clean Tailwind design
+- Navbar with:
+  - Notifications
+  - Profile link
+  - Create Task
+  - Logout
+- Footer with author information
+- Smooth loading and error states
+
+---
+
+## 🧪 Testing
+
+Backend tests implemented using **Jest**:
+- Task creation validation
+- Authorization checks
+- Audit logging verification
+
+Run tests:
+```bash
+npm test
+
+## 🗃️ Database Choice
+
+PostgreSQL was chosen because:
+- Strong relational integrity
+- Works perfectly with Prisma
+- Ideal for structured data (users, tasks, relations)
+- Scales well for collaborative systems
+
+---
+
+## 🔌 API Endpoints
+
+### Auth
+```bash
+POST   /api/auth/register
+POST   /api/auth/login
+POST   /api/auth/logout
+
+### Tasks
+```bash
+GET    /api/tasks
+POST   /api/tasks
+PUT    /api/tasks/:id
+DELETE /api/tasks/:id
+
+### Notifications
+```bash
+GET    /api/notifications
+PATCH  /api/notifications/:id/read
+PATCH  /api/notifications/read-all
+
+### Profile
+```bash
+GET    /api/profile
+PUT    /api/profile
+
+
+## 🛠️ Local Setup
+
+### Backend
+```bash
 cd backend
 npm install
-
-
-Run database migrations:
-
 npx prisma migrate dev
-
-
-Start the backend server:
-
 npm run dev
 
-
-Backend runs on:
-
-http://localhost:5000
-
-3️⃣ Frontend Setup
-cd ../frontend
+### Frontend
+```bash
+cd frontend
 npm install
-npm start
+npm run dev
+
+## 🖼️ Screenshots
+
+### Login Page
+![Login Page](screenshots/login.png)
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Create Task
+![Create Task](screenshots/create-task.png)
+
+### Profile Page
+![Profile Page](screenshots/profile.png)
 
 
-Frontend runs on:
+---
 
-http://localhost:3000
+## ⚠️ Trade-offs & Assumptions
 
+- No email notifications (in-app only)
+- Simple role model (creator vs assignee)
+- Minimal animations to keep performance optimal
 
-## 🔄 Real-Time Functionality Demo
+---
 
-Login as User A
+## ✅ Final Notes
 
-Login as User B (in another browser or incognito)
+This project follows:
+- Clean architecture (Controller → Service → Repository)
+- Strong TypeScript typing
+- DTO validation using Zod
+- Modern frontend data handling
+- Production-ready real-time behavior
 
-Assign a task to User B
+---
 
-User B receives a real-time notification
+## 👤 Author
 
-Updating task status sends updates to both users
-
-## 🧪 Notes for Reviewers
-
-This project prioritizes engineering correctness and architecture
-
-UI is intentionally minimal to focus on backend and real-time functionality
-
-Prisma v5 is used for stability
-
-No authentication tokens are stored in localStorage
-
-## ✅ Submission Checklist
-
- Authentication & Authorization
-
- Task CRUD
-
- Real-time updates
-
- Clean architecture
-
- GitHub commits
-
- Documentation
-
-🙌 Author
-Anshuman
-Full Stack Developer 
+Anshuman Tiwari 
+Full-Stack Developer
