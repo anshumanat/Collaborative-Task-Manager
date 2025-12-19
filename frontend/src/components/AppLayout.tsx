@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 type Props = {
   children: ReactNode;
@@ -12,6 +13,7 @@ export default function AppLayout({ children }: Props) {
       <main className="max-w-6xl mx-auto p-4">
         {children}
       </main>
+      <Footer />
     </div>
   );
 }
