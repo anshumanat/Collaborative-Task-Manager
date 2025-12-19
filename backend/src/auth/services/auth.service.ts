@@ -5,8 +5,18 @@ import { RegisterDto, LoginDto } from "../dtos/auth.dto";
 
 const prisma = new PrismaClient();
 
+interface AuthResponse {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  token: string;
+}
+
 export class AuthService {
-  static async register(data: RegisterDto) {
+  // ---------------- REGISTER ----------------
+  static async register(data: RegisterDto): Promise<AuthResponse> {
     const existingUser = await prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -23,16 +33,27 @@ export class AuthService {
         email: data.email,
         password: hashedPassword,
       },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
     });
 
+    const token = jwt.sign(
+      { id: user.id },
+      process.env.JWT_SECRET!,
+      { expiresIn: "7d" }
+    );
+
     return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
+      user,
+      token,
     };
   }
 
-  static async login(data: LoginDto) {
+  // ---------------- LOGIN ----------------
+  static async login(data: LoginDto): Promise<AuthResponse> {
     const user = await prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -51,18 +72,19 @@ export class AuthService {
     }
 
     const token = jwt.sign(
-      { userId: user.id },
-      process.env.JWT_SECRET || "secret",
+      { id: user.id },
+      process.env.JWT_SECRET!,
       { expiresIn: "7d" }
     );
 
     return {
-      token,
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
       },
+      token,
     };
   }
 }
+

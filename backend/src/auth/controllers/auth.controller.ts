@@ -10,8 +10,18 @@ export class AuthController {
   static async register(req: Request, res: Response) {
     try {
       const validatedData = registerDto.parse(req.body);
-      const user = await AuthService.register(validatedData);
-      return res.status(201).json(user);
+      const result = await AuthService.register(validatedData);
+
+      // 🔐 Set cookie on register as well
+      res.cookie("token", result.token, {
+        httpOnly: true,
+        secure: true,          // ✅ REQUIRED for HTTPS (Vercel/Render)
+        sameSite: "none",      // ✅ REQUIRED for cross-domain
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+        path: "/",
+      });
+
+      return res.status(201).json(result.user);
     } catch (error: any) {
       return res.status(400).json({ message: error.message });
     }
@@ -25,9 +35,10 @@ export class AuthController {
 
       res.cookie("token", result.token, {
         httpOnly: true,
-        sameSite: "lax",
-        secure: false, // true in production (HTTPS)
-        path: "/",     // explicit for safe clearing
+        secure: true,          // ✅ REQUIRED
+        sameSite: "none",      // ✅ REQUIRED
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        path: "/",
       });
 
       return res.status(200).json(result.user);
@@ -40,9 +51,9 @@ export class AuthController {
   static async logout(_req: Request, res: Response) {
     res.clearCookie("token", {
       httpOnly: true,
-      sameSite: "lax",
-      secure: false,
-      path: "/", //  MUST match login cookie
+      secure: true,
+      sameSite: "none",
+      path: "/",
     });
 
     return res.status(200).json({ message: "Logged out successfully" });
@@ -86,4 +97,5 @@ export class AuthController {
     return res.json(updatedUser);
   }
 }
+
 
