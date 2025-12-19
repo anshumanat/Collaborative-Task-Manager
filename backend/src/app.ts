@@ -6,6 +6,8 @@ import taskRoutes from "./tasks/routes/task.routes";
 import profileRoutes from "./users/routes/profile.routes";
 import notificationRoutes from "./notifications/routes/notification.routes";
 import { errorHandler } from "./middlewares/error.middleware";
+import userRoutes from "./users/routes/user.routes";
+
 
 const app = express();
 app.set("trust proxy", 1);
@@ -19,7 +21,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/notifications", notificationRoutes);
-
+app.use("/api/users", userRoutes);
 
 app.get("/health", (_req, res) => {
   res.json({ status: "OK" });

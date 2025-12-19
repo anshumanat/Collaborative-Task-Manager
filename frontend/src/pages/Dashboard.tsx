@@ -73,6 +73,12 @@ function TaskSection({
               <p className="font-medium text-gray-900">
                 {task.title}
               </p>
+              {task.description && (
+                 <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                   {task.description}
+                 </p>
+               )}
+               
               <p className="text-xs text-gray-500">
                 Due: {new Date(task.dueDate).toLocaleDateString()}
               </p>

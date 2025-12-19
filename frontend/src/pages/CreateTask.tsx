@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateTask } from "../hooks/useCreateTask";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "../components/AppLayout";
+import { useUsers } from "../hooks/useUsers";
 
 const taskSchema = z.object({
   title: z.string().min(1, "Title is required").max(100),
@@ -24,6 +25,7 @@ export default function CreateTask() {
     resolver: zodResolver(taskSchema),
   });
 
+  const { data: users = [], isLoading: usersLoading } = useUsers();
   const createTaskMutation = useCreateTask();
   const navigate = useNavigate();
 
@@ -49,10 +51,7 @@ export default function CreateTask() {
             Create New Task
           </h1>
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="space-y-5"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Title */}
             <div>
               <label className="block text-sm font-medium mb-1">
@@ -61,7 +60,7 @@ export default function CreateTask() {
               <input
                 {...register("title")}
                 placeholder="Task title"
-                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
               />
               {errors.title && (
                 <p className="text-red-500 text-xs mt-1">
@@ -77,9 +76,9 @@ export default function CreateTask() {
               </label>
               <textarea
                 {...register("description")}
-                placeholder="Optional description"
                 rows={3}
-                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Optional description"
+                className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -91,7 +90,7 @@ export default function CreateTask() {
               <input
                 type="date"
                 {...register("dueDate")}
-                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
               />
               {errors.dueDate && (
                 <p className="text-red-500 text-xs mt-1">
@@ -107,7 +106,7 @@ export default function CreateTask() {
               </label>
               <select
                 {...register("priority")}
-                className="w-full border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border rounded px-3 py-2 bg-white focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select priority</option>
                 <option value="LOW">Low</option>
@@ -122,16 +121,25 @@ export default function CreateTask() {
               )}
             </div>
 
-            {/* Assignee */}
+            {/* Assignee (✅ USER DROPDOWN) */}
             <div>
               <label className="block text-sm font-medium mb-1">
-                Assign To (User ID)
+                Assign To
               </label>
-              <input
+              <select
                 {...register("assignedToId")}
-                placeholder="User ID"
-                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+                disabled={usersLoading}
+                className="w-full border rounded px-3 py-2 bg-white focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">
+                  {usersLoading ? "Loading users..." : "Select user"}
+                </option>
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name} ({user.email})
+                  </option>
+                ))}
+              </select>
               {errors.assignedToId && (
                 <p className="text-red-500 text-xs mt-1">
                   {errors.assignedToId.message}
@@ -139,7 +147,7 @@ export default function CreateTask() {
               )}
             </div>
 
-            {/* Error */}
+            {/* Backend Error */}
             {createTaskMutation.isError && (
               <p className="text-red-600 text-sm">
                 {(createTaskMutation.error as Error).message}
@@ -158,10 +166,10 @@ export default function CreateTask() {
 
               <button
                 type="submit"
-                disabled={createTaskMutation.isLoading}
+                disabled={createTaskMutation.isPending}
                 className="bg-blue-600 text-white px-5 py-2 rounded text-sm hover:bg-blue-700 disabled:opacity-50"
               >
-                {createTaskMutation.isLoading
+                {createTaskMutation.isPending
                   ? "Creating..."
                   : "Create Task"}
               </button>
@@ -172,3 +180,4 @@ export default function CreateTask() {
     </AppLayout>
   );
 }
+

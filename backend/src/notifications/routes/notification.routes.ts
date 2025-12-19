@@ -7,6 +7,7 @@ const router = Router();
 router.use(authMiddleware);
 
 router.get("/", NotificationController.list);
-router.put("/:id/read", NotificationController.markRead);
+router.patch("/:id/read", NotificationController.markRead);
+router.patch("/read-all", NotificationController.markAllRead);
 
 export default router;

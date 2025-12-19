@@ -109,10 +109,10 @@ export default function Register() {
 
             <button
               type="submit"
-              disabled={registerMutation.isLoading}
+              disabled={registerMutation.isPending}
               className="w-full bg-green-600 text-white py-2 rounded text-sm hover:bg-green-700 disabled:opacity-50"
             >
-              {registerMutation.isLoading
+              {registerMutation.isPending
                 ? "Creating account..."
                 : "Register"}
             </button>
