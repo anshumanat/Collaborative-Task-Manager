@@ -37,7 +37,6 @@ The application supports **secure authentication, task collaboration, real-time 
 
 ```text
 collaborative-task-manager/
-│
 ├── backend/
 │   ├── src/
 │   │   ├── auth/
@@ -48,14 +47,13 @@ collaborative-task-manager/
 │   │   ├── app.ts
 │   │   └── server.ts
 │   └── prisma/
-│
 └── frontend/
-    ├── src/
-    │   ├── pages/
-    │   ├── components/
-    │   ├── hooks/
-    │   ├── api/
-    │   └── main.tsx
+    └── src/
+        ├── pages/
+        ├── components/
+        ├── hooks/
+        ├── api/
+        └── main.tsx
 
 ## 🔐 Authentication & Authorization
 
