@@ -76,10 +76,10 @@ export default function Profile() {
             <div className="flex justify-end pt-2">
               <button
                 type="submit"
-                disabled={updateProfile.isLoading}
+                disabled={updateProfile.isPending}
                 className="bg-blue-600 text-white px-5 py-2 rounded text-sm hover:bg-blue-700 disabled:opacity-50"
               >
-                {updateProfile.isLoading ? "Saving..." : "Save Changes"}
+                {updateProfile.isPending ? "Saving..." : "Save Changes"}
               </button>
             </div>
           </form>
