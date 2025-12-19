@@ -28,11 +28,17 @@ export default function Navbar() {
 
     socket.on("task:assigned", () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
     });
-
+    
     socket.on("task:status-updated", () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
     });
+    
+    socket.on("task:priority-updated", () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    });
+    
 
     return () => {
       socket.off("task:assigned");
