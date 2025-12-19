@@ -15,27 +15,26 @@ The application supports **secure authentication, task collaboration, real-time 
 ## 🧰 Tech Stack
 
 ### Frontend
-- **React (Vite)**
-- **TypeScript**
-- **Tailwind CSS**
-- **React Query (TanStack Query)**
-- **React Hook Form + Zod**
-- **Socket.io Client**
+- React (Vite)
+- TypeScript
+- Tailwind CSS
+- React Query (TanStack Query)
+- React Hook Form + Zod
+- Socket.io Client
 
 ### Backend
-- **Node.js + Express**
-- **TypeScript**
-- **Prisma ORM**
-- **PostgreSQL**
-- **JWT Authentication**
-- **Socket.io**
-- **Jest (Testing)**
+- Node.js + Express
+- TypeScript
+- Prisma ORM
+- PostgreSQL
+- JWT Authentication
+- Socket.io
+- Jest (Testing)
 
 ---
 
 ## 🗂️ Project Structure
 
-```text
 collaborative-task-manager/
 ├── backend/
 │   ├── src/
@@ -55,11 +54,13 @@ collaborative-task-manager/
         ├── api/
         └── main.tsx
 
+---
+
 ## 🔐 Authentication & Authorization
 
 - User registration & login  
-- Passwords hashed using **bcrypt**  
-- JWT stored in **HttpOnly cookies**  
+- Passwords hashed using bcrypt  
+- JWT stored in HttpOnly cookies  
 - Protected routes via middleware  
 - Role-based permissions:
   - Only creators can delete tasks
@@ -70,18 +71,13 @@ collaborative-task-manager/
 ## 📋 Task Management (CRUD)
 
 Each task contains:
-- `title`
-- `description`
-- `dueDate`
-- `priority` (LOW, MEDIUM, HIGH, URGENT)
-- `status` (TODO, IN_PROGRESS, REVIEW, COMPLETED)
-- `creatorId`
-- `assignedToId`
+- title, description, dueDate
+- priority (LOW, MEDIUM, HIGH, URGENT)
+- status (TODO, IN_PROGRESS, REVIEW, COMPLETED)
+- creatorId & assignedToId
 
 Supported operations:
-- Create task
-- Update task
-- Delete task
+- Create, Update, and Delete tasks
 - Filter by status & priority
 - Sort by due date
 
@@ -90,37 +86,30 @@ Supported operations:
 ## ⚡ Real-Time Collaboration (Socket.io)
 
 Real-time events include:
-- Task assignment
-- Status updates
-- Priority updates
-- Instant notification delivery
+- Task assignment & Status updates
+- Priority updates & Instant notification delivery
 - Live dashboard synchronization (no refresh needed)
+- Sockets are authenticated using JWT from cookies:
+  Room: user:{userId}
 
-Sockets are authenticated using JWT from cookies and users are joined to private rooms:
-
-```text
-user:{userId}
-
+---
 
 ## 🔔 Notifications System
 
 - Persistent notifications stored in DB  
 - Real-time delivery via Socket.io  
-- Notification types:
-  - Task assigned
-  - Task status changed
-- Mark individual notification as read
-- Mark all notifications as read
+- Notification types: Task assigned, Task status changed
+- Mark individual or all notifications as read
 - Notification badge updates automatically
 
 ---
 
 ## 🧾 Audit Logging (Bonus)
 
-Every important task update is logged:
+Every important task update is logged for accountability:
 - Who updated the task
 - What action was taken
-- When it happened
+- When it happened (Timestamp)
 
 Useful for:
 - Debugging
@@ -140,14 +129,13 @@ Useful for:
 
 ## 📊 Dashboard Features
 
-Dashboard includes:
-- Tasks assigned to me
-- Tasks created by me
-- Overdue tasks
+- Tasks assigned to me / Tasks created by me
+- Overdue task highlighting
 - Filtering by status & priority
 - Sorting by due date
 - Loading skeletons for better UX
-- Task status updates use optimistic UI for instant feedback.
+- Optimistic UI updates for instant feedback
+
 ---
 
 ## 🎨 UI & UX
@@ -166,66 +154,49 @@ Dashboard includes:
 
 ## 🧪 Testing
 
-Backend tests implemented using **Jest**:
+Backend tests implemented using Jest:
 - Task creation validation
 - Authorization checks
 - Audit logging verification
 
-Run tests:
-```bash
-npm test
-
-## 🗃️ Database Choice
-
-PostgreSQL was chosen because:
-- Strong relational integrity
-- Works perfectly with Prisma
-- Ideal for structured data (users, tasks, relations)
-- Scales well for collaborative systems
+Command: cd backend && npm test
 
 ---
 
 ## 🔌 API Endpoints
 
-### Auth
-```bash
-POST   /api/auth/register
-POST   /api/auth/login
-POST   /api/auth/logout
+Auth:
+- POST /api/auth/register
+- POST /api/auth/login
+- POST /api/auth/logout
 
-### Tasks
-```bash
-GET    /api/tasks
-POST   /api/tasks
-PUT    /api/tasks/:id
-DELETE /api/tasks/:id
+Tasks:
+- GET /api/tasks
+- POST /api/tasks
+- PUT /api/tasks/:id
+- DELETE /api/tasks/:id
 
-### Notifications
-```bash
-GET    /api/notifications
-PATCH  /api/notifications/:id/read
-PATCH  /api/notifications/read-all
+Notifications:
+- GET /api/notifications
+- PATCH /api/notifications/:id/read
+- PATCH /api/notifications/read-all
 
-### Profile
-```bash
-GET    /api/profile
-PUT    /api/profile
-
+---
 
 ## 🛠️ Local Setup
 
-### Backend
-```bash
-cd backend
-npm install
-npx prisma migrate dev
-npm run dev
+Backend:
+1. cd backend
+2. npm install
+3. npx prisma migrate dev
+4. npm run dev
 
-### Frontend
-```bash
-cd frontend
-npm install
-npm run dev
+Frontend:
+1. cd frontend
+2. npm install
+3. npm run dev
+
+---
 
 ## 🖼️ Screenshots
 
@@ -241,7 +212,6 @@ npm run dev
 ### Profile Page
 ![Profile Page](screenshots/profile.png)
 
-
 ---
 
 ## ⚠️ Trade-offs & Assumptions
@@ -254,16 +224,14 @@ npm run dev
 
 ## ✅ Final Notes
 
-This project follows:
 - Clean architecture (Controller → Service → Repository)
 - Strong TypeScript typing
 - DTO validation using Zod
 - Modern frontend data handling
-- Production-ready real-time behavior
 
 ---
 
 ## 👤 Author
 
-Anshuman Tiwari 
+Anshuman Tiwari
 Full-Stack Developer
