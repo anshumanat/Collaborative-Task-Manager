@@ -16,12 +16,13 @@ export const authMiddleware = (
   }
 
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || "secret"
-    ) as { userId: string };
-
-    (req as any).user = { id: decoded.userId };
+     const decoded = jwt.verify(
+       token,
+       process.env.JWT_SECRET || "secret"
+     ) as { id: string };
+     
+     (req as any).user = { id: decoded.id };
+     
     next();
   } catch {
     return res.status(401).json({ message: "Invalid token" });
