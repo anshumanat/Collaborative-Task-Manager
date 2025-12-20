@@ -7,8 +7,8 @@ The application supports **secure authentication, task collaboration, real-time 
 
 ## 🚀 Live Demo
 
-- **Frontend**: <FRONTEND_DEPLOYED_URL>
-- **Backend API**: <BACKEND_DEPLOYED_URL>
+- **Frontend**: <https://collaborative-task-manager-six.vercel.app/>
+- **Backend API**: <https://collaborative-task-manager-backend-hppt.onrender.com>
 
 ---
 
@@ -198,6 +198,19 @@ Frontend:
 
 ---
 
+### Production Configuration Notes
+
+- Frontend is deployed on Vercel.
+- Backend is deployed on Render.
+- PostgreSQL is hosted on Railway.
+
+Important production settings:
+- JWT is stored in HttpOnly cookies.
+- Cookies use `secure=true` and `sameSite=none` for cross-domain auth.
+- Vercel rewrites `/api/*` requests to the backend service.
+
+---
+
 ## 🖼️ Screenshots
 
 ### Login Page
@@ -221,6 +234,14 @@ Frontend:
 - Minimal animations to keep performance optimal
 
 ---
+
+## Debug Notes / Fixes
+
+- Fixed JWT payload mismatch between auth service and auth middleware that caused `creatorId` to be undefined in production.
+- Ensured cookies work correctly in production using `sameSite="none"` and `secure=true`.
+- Added SPA rewrite rules for Vercel to prevent 404s on page refresh.
+
+
 
 ## ✅ Final Notes
 
