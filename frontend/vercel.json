@@ -3,6 +3,11 @@
     {
       "source": "/api/(.*)",
       "destination": "https://collaborative-task-manager-backend-hppt.onrender.com/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
+
