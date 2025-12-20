@@ -8,12 +8,20 @@ type Props = {
 
 export default function AppLayout({ children }: Props) {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen flex flex-col bg-gray-100">
+      {/* Top Navigation */}
       <Navbar />
-      <main className="max-w-6xl mx-auto p-4">
-        {children}
+
+      {/* Main Content */}
+      <main className="flex-1 w-full px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-6xl mx-auto">
+          {children}
+        </div>
       </main>
+
+      {/* Footer */}
       <Footer />
     </div>
   );
 }
+
