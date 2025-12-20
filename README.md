@@ -202,7 +202,7 @@ Frontend:
 
 - Frontend is deployed on Vercel.
 - Backend is deployed on Render.
-- PostgreSQL is hosted on Railway.
+- PostgreSQL is hosted on Render.
 
 Important production settings:
 - JWT is stored in HttpOnly cookies.
