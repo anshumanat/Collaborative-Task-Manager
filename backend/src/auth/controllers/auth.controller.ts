@@ -12,11 +12,11 @@ export class AuthController {
       const validatedData = registerDto.parse(req.body);
       const result = await AuthService.register(validatedData);
 
-      // 🔐 Set cookie on register as well
+      // Set auth cookie
       res.cookie("token", result.token, {
         httpOnly: true,
-        secure: true,          // ✅ REQUIRED for HTTPS (Vercel/Render)
-        sameSite: "none",      // ✅ REQUIRED for cross-domain
+        secure: true,
+        sameSite: "none",
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
         path: "/",
       });
@@ -34,14 +34,13 @@ export class AuthController {
       const result = await AuthService.login(validatedData);
 
       const isProd = process.env.NODE_ENV === "production";
-      
+
       res.cookie("token", result.token, {
         httpOnly: true,
-        sameSite: isProd ? "none" : "lax",
         secure: isProd,
+        sameSite: isProd ? "none" : "lax",
         path: "/",
       });
-      
 
       return res.status(200).json(result.user);
     } catch (error: any) {
@@ -63,7 +62,12 @@ export class AuthController {
 
   // ---------------- GET CURRENT USER ----------------
   static async me(req: Request, res: Response) {
-    const userId = (req as any).user.id;
+    const userId = (req as any).user?.id;
+
+    // ✅ IMPORTANT GUARD (prevents Prisma crash)
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -79,7 +83,12 @@ export class AuthController {
 
   // ---------------- UPDATE PROFILE ----------------
   static async updateProfile(req: Request, res: Response) {
-    const userId = (req as any).user.id;
+    const userId = (req as any).user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
     const { name } = req.body;
 
     if (!name || name.trim().length < 2) {
