@@ -33,13 +33,15 @@ export class AuthController {
       const validatedData = loginDto.parse(req.body);
       const result = await AuthService.login(validatedData);
 
+      const isProd = process.env.NODE_ENV === "production";
+      
       res.cookie("token", result.token, {
         httpOnly: true,
-        secure: true,          // ✅ REQUIRED
-        sameSite: "none",      // ✅ REQUIRED
-        maxAge: 1000 * 60 * 60 * 24 * 7,
+        sameSite: isProd ? "none" : "lax",
+        secure: isProd,
         path: "/",
       });
+      
 
       return res.status(200).json(result.user);
     } catch (error: any) {
